@@ -55,9 +55,9 @@ public class Blue
         { 
             System.out.println(e); 
         } 
+        //Define how long it took
+        long end = System.currentTimeMillis();
+        float time = (end-start)/1000F;
+        System.out.println(time + " seconds"); 
     } 
-  	//Define how long it took
-	  long end = System.currentTimeMillis();
-		float time = (end-start)/1000F;
-	  System.out.println(time + "seconds"); 
 } 
