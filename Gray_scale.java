@@ -22,6 +22,9 @@ public class Gray_scale
         { 
             System.out.println(e); 
         } 
+
+        //Define the starting time
+    	long start = System.currentTimeMillis();
   
         // get width and height 
         int width = image.getWidth(); 
@@ -55,5 +58,10 @@ public class Gray_scale
         { 
             System.out.println(e); 
         } 
+
+         //Define how long it took
+         long end = System.currentTimeMillis();
+         float time = (end-start)/1000F;
+         System.out.println(time + " seconds"); 
     } 
 } 

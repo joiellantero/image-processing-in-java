@@ -21,7 +21,8 @@ public class Blue
         { 
             System.out.println(e); 
         } 
-  	//Define the starting time
+        
+  	    //Define the starting time
     	long start = System.currentTimeMillis();
 
         // get width and height 
