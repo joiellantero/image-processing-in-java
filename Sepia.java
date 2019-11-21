@@ -1,3 +1,4 @@
+//based on code found on https://github.com/yusufshakeel/Java-Image-Processing-Project/blob/master/example/Sepia.java
 // Java program to demonstrate colored to red colored image conversion 
 import java.io.File; 
 import java.io.IOException; 
@@ -8,38 +9,35 @@ public class Sepia
 { 
     public static void main(String args[])throws IOException 
     { 
-        BufferedImage img = null; 
+        BufferedImage image = null; 
         File f = null; 
   
         // read image 
         try
         { 
             f = new File("lena.jpg"); 
-            img = ImageIO.read(f); 
+            image = ImageIO.read(f); 
         } 
         catch(IOException e) 
         { 
             System.out.println(e); 
         } 
   
-        // get width and height 
-        int width = img.getWidth(); 
-        int height = img.getHeight(); 
+        // get image width and height 
+        int width = image.getWidth(); 
+        int height = image.getHeight(); 
   
-        // convert to red image 
-        for (int y = 0; y < height; y++) 
-        { 
-            for (int x = 0; x < width; x++) 
-            { 
-                int p = img.getRGB(x,y); 
+        for (int y = 0; y < height; y++){ 
+            for (int x = 0; x < width; x++){ 
+                int rgb = image.getRGB(x,y); 
   
-                int a = (p>>24)&0xff; 
-                int r = (p>>16)&0xff;
-				int g = (p>>8)&0xff; 
-                int b = p&0xff;  
+                int a = (rgb>>24)&0xff; 
+                int r = (rgb>>16)&0xff;
+				int g = (rgb>>8)&0xff; 
+                int b = rgb&0xff;  
 				int tr = (int)(r*0.393 + g*0.769 + b*0.189);
-               int tg = (int)(r*0.349 + g*0.686 + b*0.168);
-               int tb = (int)(r*0.272 + g*0.534 + b*0.131);
+               	int tg = (int)(r*0.349 + g*0.686 + b*0.168);
+              	int tb = (int)(r*0.272 + g*0.534 + b*0.131);
 				if (tr > 255){
 					r = 255;
 				}else{
@@ -55,12 +53,10 @@ public class Sepia
 				}else{
 					b = tb;
 				}
-                // set new RGB 
-                // keeping the r value same as in original 
-                // image and setting g and b as 0. 
-                p = (a<<24) | (r<<16) | (g<<8) | b; 
+                // set new RGB (blue still the same and then 0 for red and green) 
+                rgb = (a<<24) | (r<<16) | (g<<8) | b; 
   
-                img.setRGB(x, y, p); 
+                image.setRGB(x, y, rgb); 
             } 
         } 
   
@@ -68,7 +64,7 @@ public class Sepia
         try
         { 
             f = new File("lena_sepia.jpg"); 
-            ImageIO.write(img, "jpg", f); 
+            ImageIO.write(image, "jpg", f); 
         } 
         catch(IOException e) 
         { 

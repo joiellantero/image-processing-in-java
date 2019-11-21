@@ -1,11 +1,10 @@
 //based on code found on https://github.com/yusufshakeel/Java-Image-Processing-Project/blob/master/example/RedImage.java
-// Java program to demonstrate colored to red colored image conversion 
 import java.io.File; 
 import java.io.IOException; 
 import java.awt.image.BufferedImage; 
 import javax.imageio.ImageIO; 
   
-public class Red
+public class Blue
 { 
     public static void main(String args[])throws IOException 
     { 
@@ -23,7 +22,7 @@ public class Red
             System.out.println(e); 
         } 
   
-        // get image width and height 
+        // get width and height 
         int width = image.getWidth(); 
         int height = image.getHeight(); 
   
@@ -35,10 +34,10 @@ public class Red
                 int rgb = image.getRGB(x,y); 
   
                 int a = (rgb>>24)&0xff; 
-                int r = (rgb>>16)&0xff; 
+                int b = (rgb)&0xff; 
   
-                // // set new RGB (blue still the same and then 0 for red and green) 
-                rgb = (a<<24) | (r<<16) | (0<<8) | 0; 
+                // set new RGB (blue still the same and then 0 for red and green)
+                rgb = (a<<24) | (0<<16) | (0<<8) | b; 
   
                 image.setRGB(x, y, rgb); 
             } 
@@ -47,7 +46,7 @@ public class Red
         // write image 
         try
         { 
-            f = new File("lena_red.jpg"); 
+            f = new File("lena_blue.jpg"); 
             ImageIO.write(image, "jpg", f); 
         } 
         catch(IOException e) 
