@@ -1,14 +1,31 @@
+//based on code found on https://github.com/yusufshakeel/Java-Image-Processing-Project/blob/master/example/Sepia.java
+// Java program to demonstrate colored to red colored image conversion 
 import java.io.File; 
 import java.io.IOException; 
 import java.awt.image.BufferedImage; 
 import javax.imageio.ImageIO; 
 
-class sepia{
-	void rgbtosepia(BufferedImage image, int height, int width){
-		File f = null;
-		//Define the starting time
-    	long start = System.currentTimeMillis();
-		for (int y = 0; y < height; y++){ 
+class Singlethread extends Thread{
+    public void run(){
+        BufferedImage image = null; 
+        File f = null; 
+  
+        // read image 
+        try
+        { 
+            f = new File("lena.jpg"); 
+            image = ImageIO.read(f); 
+        } 
+        catch(IOException e) 
+        { 
+            System.out.println(e); 
+        } 
+  
+        // get image width and height 
+        int width = image.getWidth(); 
+        int height = image.getHeight(); 
+  
+        for (int y = 0; y < height; y++){ 
             for (int x = 0; x < width; x++){ 
                 int rgb = image.getRGB(x,y); 
   
@@ -39,68 +56,43 @@ class sepia{
   
                 image.setRGB(x, y, rgb); 
             } 
-        }
-		        // write image 
+        } 
+  
+        // write image 
         try
         { 
-            f = new File("lena_sepia_multi.jpg"); 
+            f = new File("lena_sepia_st.jpg"); 
             ImageIO.write(image, "jpg", f); 
         } 
         catch(IOException e) 
         { 
             System.out.println(e); 
-        }
-		//Define how long it took
-		long end = System.currentTimeMillis();
-		float time = (end-start)/1000F;
-    	System.out.println(time + "seconds"); 
-		//System.out.println("Done.");
+        } 
 
-	}
+    }
 }
-
-class MyThread extends Thread{
-	sepia ref;
-	BufferedImage image;
-	int height;
-	int width;
-	MyThread(sepia p, BufferedImage image_in, int height_in, int width_in){
-		ref = p;
-		image = image_in;
-		height = height_in;
-		width = width_in;
-	}
-	@Override
-	public void run(){
-		ref.rgbtosepia(image, height, width);
-	}
-}
-
-public class sepia_st
+  
+public class Sepia_st
 { 
     public static void main(String args[])throws IOException 
     { 
-        BufferedImage image = null; 
-        File f = null; 
-  
-        // read image 
-        try
-        { 
-            f = new File("lena.jpg"); 
-            image = ImageIO.read(f); 
-        } 
-        catch(IOException e) 
-        { 
-            System.out.println(e); 
-        } 
-  
-		// get image width and height 
-        int width = image.getWidth(); 
-        int height = image.getHeight(); 
-  
-        sepia new_img = new sepia();
-		MyThread nRef = new MyThread(new_img, image, height, width);
-		nRef.start();
-  
+        // //Define the starting time
+        long start = System.currentTimeMillis();
+
+        Singlethread thread = new Singlethread();
+        thread.start();
+
+        try{
+            thread.join(); 
+        }
+ 
+        catch(Exception ex) { 
+            System.out.println(ex); 
+        }
+
+        //  //Define how long it took
+         long end = System.currentTimeMillis();
+         float time = (end-start)/1000F;
+         System.out.println("Elapsed time: " + time + " s");  
     } 
 } 
