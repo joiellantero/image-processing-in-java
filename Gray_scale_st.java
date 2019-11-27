@@ -72,6 +72,14 @@ public class Gray_scale_st
         Singlethread thread = new Singlethread();
         thread.start();
 
+        try{
+           thread.join(); 
+        }
+
+        catch(Exception ex) { 
+            System.out.println(ex); 
+        }
+
         //  //Define how long it took
          long end = System.currentTimeMillis();
          float time = (end-start)  / 1000F;
