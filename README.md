@@ -30,8 +30,8 @@ Finally, check the folder containing the cloned repo to see the processed image.
 
 ## Authors
 
-* **Joie Angelo Llantero** 
-* **Mikayla Alexis Sagun** 
+* **Joie Angelo Llantero** - *BS CoE* 
+* **Mikayla Alexis Sagun** - *BS CoE* 
 
 ## License
 
