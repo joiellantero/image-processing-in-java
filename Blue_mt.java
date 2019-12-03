@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.awt.image.BufferedImage; 
 import javax.imageio.ImageIO; 
 
-class Singlethread extends Thread{
+class Multithread extends Thread{
     public void run(){
         BufferedImage image = null; 
         File f = null; 
@@ -61,7 +61,7 @@ public class Blue_st
         //Define the starting time
         long start = System.currentTimeMillis();
         
-        Singlethread thread = new Singlethread();
+        Multithread thread = new Multithread();
         thread.start();
 
         try{
