@@ -6,6 +6,12 @@ This project explores the efficiency of image processing in both CPU and GPU usi
 
 Clone the repository then run the each of the java files by following the steps below.
 
+### Prerequisites
+
+You must have Java installed in your computer
+
+Java Installer for [Mac](https://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html) and [Windows](https://www.java.com/en/download/help/windows_manual_download.xml)
+
 ## Deployment
 
 Go to the terminal and enter the following codes. Note that "filename" should be replaced with the respective file names.
