@@ -10,7 +10,7 @@ Clone the repository then run the each of the java files by following the steps 
 
 You must have Java installed in your computer
 
-Java Installer for [Mac](https://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html) and [Windows](https://www.java.com/en/download/help/windows_manual_download.xml)
+Java Installer for [Mac](https://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html), [Linux-64bit](https://java.com/en/download/help/linux_x64_install.xml), [Linux-32bit](https://java.com/en/download/help/linux_install.xml) and [Windows](https://www.java.com/en/download/help/windows_manual_download.xml)
 
 ## Deployment
 

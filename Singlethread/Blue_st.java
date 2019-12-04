@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.awt.image.BufferedImage; 
 import javax.imageio.ImageIO; 
 
-class Multithread extends Thread{
+class Singlethread extends Thread{
     public void run(){
         BufferedImage image = null; 
         File f = null; 
@@ -12,7 +12,7 @@ class Multithread extends Thread{
         // read image 
         try
         { 
-            f = new File("lena.jpg"); 
+            f = new File("../Raw_Image/lena.jpg"); 
             image = ImageIO.read(f); 
         } 
         catch(IOException e) 
@@ -43,10 +43,10 @@ class Multithread extends Thread{
   
         // write image 
         try
-        { 
-            f = new File("lena_blue.jpg"); 
-            ImageIO.write(image, "jpg", f); 
-        } 
+        {
+            f = new File("../Processed_Images/lena_blue.jpg"); 
+            ImageIO.write(image, "jpg", f);
+        }
         catch(IOException e) 
         { 
             System.out.println(e); 
@@ -61,7 +61,7 @@ public class Blue_st
         //Define the starting time
         long start = System.currentTimeMillis();
         
-        Multithread thread = new Multithread();
+        Singlethread thread = new Singlethread();
         thread.start();
 
         try{
@@ -75,6 +75,6 @@ public class Blue_st
         //Define how long it took
         long end = System.currentTimeMillis();
         float time = (end-start)/1000F;
-        System.out.println(time + " seconds"); 
+        System.out.println("Elapsed time: " + time + " s"); 
     } 
 } 

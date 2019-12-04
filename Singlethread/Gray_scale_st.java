@@ -13,7 +13,7 @@ class Singlethread extends Thread{
         File f = null; 
 
         try{
-            f = new File("lena.jpg"); 
+            f = new File("../Raw_Image/lena.jpg"); 
             image = ImageIO.read(f); 
 
             // System.out.println ("Thread " + 
@@ -51,7 +51,7 @@ class Singlethread extends Thread{
         // write image 
         try
         { 
-            f = new File("lena_grayscale_st.jpg"); 
+            f = new File("../Processed_Images/lena_grayscale_st.jpg"); 
             ImageIO.write(image, "jpg", f); 
         } 
         catch(IOException e) 

@@ -13,7 +13,7 @@ class Singlethread extends Thread{
         // read image 
         try
         { 
-            f = new File("lena.jpg"); 
+            f = new File("../Raw_Image/lena.jpg"); 
             image = ImageIO.read(f); 
         } 
         catch(IOException e) 
@@ -45,7 +45,7 @@ class Singlethread extends Thread{
         // write image 
         try
         { 
-            f = new File("lena_green.jpg"); 
+            f = new File("../Processed_Images/lena_green.jpg"); 
             ImageIO.write(image, "jpg", f); 
         } 
         catch(IOException e) 
@@ -76,6 +76,6 @@ public class Green_st
         //Define how long it took
         long end = System.currentTimeMillis();
         float time = (end-start)/1000F;
-        System.out.println(time + " seconds");
+        System.out.println("Elapsed time: " + time + " s"); 
     } 
 } 

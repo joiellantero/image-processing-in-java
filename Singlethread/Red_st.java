@@ -1,4 +1,5 @@
 //based on code found on https://github.com/yusufshakeel/Java-Image-Processing-Project/blob/master/example/RedImage.java
+// Java program to demonstrate colored to red colored image conversion 
 import java.io.File; 
 import java.io.IOException; 
 import java.awt.image.BufferedImage; 
@@ -12,15 +13,15 @@ class Singlethread extends Thread{
         // read image 
         try
         { 
-            f = new File("lena.jpg"); 
+            f = new File("../Raw_Image/lena.jpg"); 
             image = ImageIO.read(f); 
         } 
         catch(IOException e) 
         { 
             System.out.println(e); 
         } 
-
-        // get width and height 
+  
+        // get image width and height 
         int width = image.getWidth(); 
         int height = image.getHeight(); 
   
@@ -32,10 +33,10 @@ class Singlethread extends Thread{
                 int rgb = image.getRGB(x,y); 
   
                 int a = (rgb>>24)&0xff; 
-                int b = (rgb)&0xff; 
+                int r = (rgb>>16)&0xff; 
   
-                // set new RGB (blue still the same and then 0 for red and green)
-                rgb = (a<<24) | (0<<16) | (0<<8) | b; 
+                // // set new RGB (blue still the same and then 0 for red and green) 
+                rgb = (a<<24) | (r<<16) | (0<<8) | 0; 
   
                 image.setRGB(x, y, rgb); 
             } 
@@ -44,23 +45,24 @@ class Singlethread extends Thread{
         // write image 
         try
         { 
-            f = new File("lena_blue.jpg"); 
+            f = new File("../Processed_Images/lena_red.jpg"); 
             ImageIO.write(image, "jpg", f); 
         } 
         catch(IOException e) 
         { 
             System.out.println(e); 
         } 
+
     }
 }
   
-public class Blue_st
+public class Red_st
 { 
     public static void main(String args[])throws IOException 
     { 
         //Define the starting time
         long start = System.currentTimeMillis();
-        
+
         Singlethread thread = new Singlethread();
         thread.start();
 
@@ -71,10 +73,10 @@ public class Blue_st
         catch(Exception ex) { 
             System.out.println(ex); 
         }
-
+        
         //Define how long it took
         long end = System.currentTimeMillis();
         float time = (end-start)/1000F;
-        System.out.println(time + " seconds"); 
+        System.out.println("Elapsed time: " + time + " s"); 
     } 
 } 
