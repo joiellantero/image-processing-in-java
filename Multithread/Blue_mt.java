@@ -27,7 +27,9 @@ class Multithread extends Thread{
         int width = image.getWidth()/4; 
         int height = image.getHeight()/4; 
 
-        Multithread ()
+        Multithread (start, end){
+            return ();
+        }
   
         // convert to red image 
         for (int y = 0; y < height; y++) 
@@ -127,6 +129,5 @@ public class try_mt
     {
         image.setRGB(i, j, bw_color.getRGB());
     }
-   
    
 }
