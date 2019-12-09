@@ -1,4 +1,4 @@
-# Single vs. Multithreaded Image Processing in Java and CPU vs. GPU
+# Image Processing in Java: Single vs. Multithreaded and CPU vs. GPU
 
 This project explores the efficiency of image processing in both CPU and GPU using different methods, i.e., Single and Multithreading in CPU and CUDA in GPU. We compare and contrast each of these methods to find which one is the best.
 
