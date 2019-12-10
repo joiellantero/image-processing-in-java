@@ -1,103 +1,96 @@
-// package image_convert.bmp;
-package image.multithread; 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
+ 
 import javax.imageio.ImageIO;
-
-@SuppressWarnings("serial")
-public class Blue_mt extends RecursiveAction {
-    private int[] mSource;
-    private int mStart;
-    private int mLength;
-    private int[] mDestination;
+ 
+class rgb_to_blue extends Thread{
+       
+        private int x;
+        private int y;
+        private int x_end;
+        private int y_end;
+        BufferedImage image;
+	private int rgb;
+        Color bw_color;
+ 
+        public void run() {
+               
+                 for (int i=x; i<x_end; i++){
+                        for (int j=0; j<image.getHeight(); j++){
+                   
+                            int rgb = image.getRGB(x,y); 
   
-    // Processing window size; should be odd.
-    private int mBlueWidth = 15;
-  
-    public Blue_mt(int[] src, int start, int length, int[] dst) {
-        mSource = src;
-        mStart = start;
-        mLength = length;
-        mDestination = dst;
-    }
-
-    protected void computeDirectly() {
-        int sidePixels = (mBlueWidth - 1) / 2;
-        for (int index = mStart; index < mStart + mLength; index++) {
-            // Calculate average.
-            float rt = 0, gt = 0, bt = 0;
-            for (int mi = -sidePixels; mi <= sidePixels; mi++) {
-                int mindex = Math.min(Math.max(mi + index, 0),
-                                    mSource.length - 1);
-                int pixel = mSource[mindex];
-                rt += (float)((pixel & 0x00ff0000) >> 16) / mBlueWidth;
-                gt += (float)((pixel & 0x0000ff00) >>  8) / mBlueWidth;
-                bt += (float)((pixel & 0x000000ff) >>  0) / mBlueWidth;
-            }
-          
-            // Reassemble destination pixel.
-            int dpixel = (0xff000000     ) |
-                   (((int)rt) << 16) |
-                   (((int)gt) <<  8) |
-                   (((int)bt) <<  0);
-            mDestination[index] = dpixel;
+                            int a = (rgb>>24)&0xff; 
+                            int b = (rgb)&0xff; 
+              
+                            // set new RGB (blue still the same and then 0 for red and green)
+                            rgb = (a<<24) | (0<<16) | (0<<8) | b; 
+              
+                            image.setRGB(x, y, rgb); 
+                   
+                        }
+                }
+               
         }
-    }
-
-    protected static int sThreshold = 100000;
-
-    @Override 
-    protected void compute() {
-        if (mLength < sThreshold) {
-            computeDirectly();
-            return;
-        }
-    
-        int split = mLength / 2;
-    
-        invokeAll(new Blue_mt(mSource, mStart, split, mDestination),
-                  new Blue_mt(mSource, mStart + split, mLength - split, mDestination));
-    }
-    public static void main(String args[])throws IOException 
-    { 
-        String srcName = "../Raw_Image/lena.jpg";
-        File srcFile = new File(srcName);
-        BufferedImage image = ImageIO.read(srcFile);
-
-        BufferedImage blueImage = blue(image);
-
-        String dstName = "../Processed_Images/lena_blue.jpg";
-        File dstFile = new File(dstName);
-        ImageIO.write(blueImage, "jpg", dstFile);
-
-    }  
-    
-    public static BufferedImage blue(BufferedImage srcImage) {
-        int w = srcImage.getWidth();
-        int h = srcImage.getHeight();
- 
-        int[] src = srcImage.getRGB(0, 0, w, h, null, 0, w);
-        int[] dst = new int[src.length];
- 
-        Blue_mt b = new Blue_mt(src, 0, src.length, dst);
- 
-        ForkJoinPool pool = new ForkJoinPool();
- 
-        long start = System.currentTimeMillis();
-        pool.invoke(b);
-        long end = System.currentTimeMillis();
- 
-        float time = (end-start)/1000F;
-        System.out.println("Elapsed time: " + time + " s"); 
- 
-        BufferedImage dstImage =
-                new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        dstImage.setRGB(0, 0, w, h, dst, 0, w);
- 
-        return dstImage;
-    }
+        rgb_to_blue(BufferedImage image, int x, int x_end)
+        {
+                this.x = x;
+                this.x_end = x_end;
+                this.image = image;
+        }       
 }
-
+public class Blue_mt
+{      
+        static int w_total = 0;
+        static int h_total = 0;
+    static BufferedImage image = null;
+    static int totalTime = 0;
+   
+    public static void main( String[] args ) throws InterruptedException
+    {
+     
+             try
+             {
+                        image = ImageIO.read(new File("../Raw_Image/lena.jpg"));
+             }
+           
+             
+             catch (IOException e)
+             {
+                        System.out.println(e);
+             }
+                 
+             long start=System.currentTimeMillis();
+             
+             rgb_to_blue t1 = new rgb_to_blue(image, 0, image.getWidth()/4);
+             rgb_to_blue t2 = new rgb_to_blue(image, image.getWidth()/4, image.getWidth()/2);
+             rgb_to_blue t3 = new rgb_to_blue(image, image.getWidth()/2, image.getWidth()-(image.getWidth()/4));
+             rgb_to_blue t4 = new rgb_to_blue(image, image.getWidth()-(image.getWidth()/4), image.getWidth());
+             
+             /* threads*/
+             t1.start();
+             t2.start();
+             t3.start();
+             t4.start();
+             t1.join();t2.join();t3.join();t4.join();
+             
+             
+ 
+             long stop=System.currentTimeMillis();
+ 
+                    try
+                    {
+                                ImageIO.write(image, "jpg", new File("../Processed_Images/lena_blue_mt.jpg"));
+                                System.out.println("End, saved");
+                        }
+                    catch (IOException e)
+                    {
+                                System.out.println("Error while saving");
+                        }
+             
+             System.out.println("Total time: " + (stop-start));
+    }
+   
+}

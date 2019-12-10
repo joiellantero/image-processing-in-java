@@ -5,38 +5,26 @@ import java.io.IOException;
  
 import javax.imageio.ImageIO;
  
-class rgb_to_gray extends Thread{
+ class rgb_to_gray extends Thread{
        
         private int x;
         private int y;
         private int x_end;
         private int y_end;
         BufferedImage image;
-	private int rgb;
-        Color bw_color;
- 
+		private int rgb;
+        
         public void run() {
-               
-                 for (int i=x; i<x_end; i++){
-                        for (int j=0; j<image.getHeight(); j++){
-                   
-                                    //Color color = new Color(image.getRGB(i,j));
-			int rgb = image.getRGB(i,j);
-                        int a = (rgb>>24)&0xff; 
-                			int r = (rgb>>16)&0xff;
-                        int g = (rgb>>8)&0xff; 
-                        int b = rgb&0xff;  
-                        int red = (int)(r*0.21 + g*0.71 + b*0.07);
-                        int green = (int)(r*0.21 + g*0.71 + b*0.07);
-                        int blue = (int)(r*0.21 + g*0.71 + b*0.07);
-                        rgb = (a<<24) | (red<<16) | (green<<8) | blue; 
+        	for (int i=x; i<x_end; i++){
+            	for (int j=0; j<image.getHeight(); j++){
+		            int rgb = image.getRGB(i,j);
+                    int a = (rgb>>24)&0xff; 
+                	int r = (rgb>>16)&0xff;
+					rgb = (a<<24) | (r<<16) | (0<<8) | 0;
   
-                                   
-                                    image.setRGB(x, y, rgb); 
-                   
-                        }
+                    image.setRGB(i, j, rgb); 
                 }
-               
+             }
         }
         rgb_to_gray(BufferedImage image, int x, int x_end)
         {
@@ -47,16 +35,15 @@ class rgb_to_gray extends Thread{
                
         }       
 }
-public class Grayscale
+public class Red_mt
 {      
-        static int w_total = 0;
-        static int h_total = 0;
+   	static int w_total = 0;
+   	static int h_total = 0;
     static BufferedImage image = null;
     static int totalTime = 0;
    
     public static void main( String[] args ) throws InterruptedException
     {
-     
              try
              {
                         image = ImageIO.read(new File("../Raw_Image/lena.jpg"));
@@ -65,7 +52,7 @@ public class Grayscale
              
              catch (IOException e)
              {
-                        System.out.println(e);
+                        System.out.println("Error in opening image");
              }
                  
              long start=System.currentTimeMillis();
@@ -85,18 +72,14 @@ public class Grayscale
              
  
              long stop=System.currentTimeMillis();
- 
-                    try
-                    {
-                                ImageIO.write(image, "jpg", new File("../Processed_Images/lena_grayscale_mt.jpg"));
-                                System.out.println("End, saved");
-                        }
-                    catch (IOException e)
-                    {
-                                System.out.println("Error while saving");
-                        }
+             try{
+             	ImageIO.write(image, "jpg", new File("../Processed_Images/lena_red_mt.jpg"));
+             }
+             catch (IOException e){
+                System.out.println("Error while saving");
+             }
              
-             System.out.println("Total time: " + (stop-start));
+             System.out.println("Total time: " + (stop-start)/1000F);
     }
    
 }
