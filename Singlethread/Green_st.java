@@ -1,5 +1,4 @@
 //based on code found on https://github.com/yusufshakeel/Java-Image-Processing-Project/blob/master/example/RedImage.java
-// Java program to demonstrate colored to rblue colored image conversion 
 import java.io.File; 
 import java.io.IOException; 
 import java.awt.image.BufferedImage; 

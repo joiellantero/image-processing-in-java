@@ -1,5 +1,4 @@
 //based on code found on https://github.com/yusufshakeel/Java-Image-Processing-Project/blob/master/example/Sepia.java
-// Java program to demonstrate colored to red colored image conversion 
 import java.io.File; 
 import java.io.IOException; 
 import java.awt.image.BufferedImage; 
