@@ -1,3 +1,5 @@
+//based on the code on https://www.ylmzcmlttn.com/2019/06/07/bgr-to-rgb-with-cuda-cuda-and-opencv/
+
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include <string>
