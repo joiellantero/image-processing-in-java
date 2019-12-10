@@ -20,7 +20,7 @@ class rgb_to_sepia extends Thread{
                  for (int i=x; i<x_end; i++){
                         for (int j=0; j<image.getHeight(); j++){
                    
-                            int rgb = image.getRGB(x,y); 
+                            int rgb = image.getRGB(i,j); 
   
                             int a = (rgb>>24)&0xff; 
                             int r = (rgb>>16)&0xff;
@@ -48,7 +48,7 @@ class rgb_to_sepia extends Thread{
                             // set new RGB (blue still the same and then 0 for red and green) 
                             rgb = (a<<24) | (r<<16) | (g<<8) | b; 
               
-                            image.setRGB(x, y, rgb); 
+                            image.setRGB(i, j, rgb); 
                    
                         }
                     }

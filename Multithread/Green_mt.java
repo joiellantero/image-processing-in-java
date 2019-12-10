@@ -5,7 +5,7 @@ import java.io.IOException;
  
 import javax.imageio.ImageIO;
  
-class rgb_to_blue extends Thread{
+class rgb_to_green extends Thread{
        
         private int x;
         private int y;
@@ -23,28 +23,28 @@ class rgb_to_blue extends Thread{
                             int rgb = image.getRGB(i,j); 
   
                             int a = (rgb>>24)&0xff; 
-                            int b = (rgb)&0xff; 
-              
+                            int g = (rgb>>8)&0xff; 
+            
                             // set new RGB (blue still the same and then 0 for red and green)
-                            rgb = (a<<24) | (0<<16) | (0<<8) | b; 
-              
+                            rgb = (a<<24) | (0<<16) | (g<<8) | 0; 
+            
                             image.setRGB(i, j, rgb); 
                    
                         }
                 }
                
         }
-        rgb_to_blue(BufferedImage image, int x, int x_end)
+        rgb_to_green(BufferedImage image, int x, int x_end)
         {
                 this.x = x;
                 this.x_end = x_end;
                 this.image = image;
         }       
 }
-public class Blue_mt
+public class Green_mt
 {      
-        static int w_total = 0;
-        static int h_total = 0;
+    static int w_total = 0;
+    static int h_total = 0;
     static BufferedImage image = null;
     static int totalTime = 0;
    
@@ -64,10 +64,10 @@ public class Blue_mt
                  
              long start=System.currentTimeMillis();
              
-             rgb_to_blue t1 = new rgb_to_blue(image, 0, image.getWidth()/4);
-             rgb_to_blue t2 = new rgb_to_blue(image, image.getWidth()/4, image.getWidth()/2);
-             rgb_to_blue t3 = new rgb_to_blue(image, image.getWidth()/2, image.getWidth()-(image.getWidth()/4));
-             rgb_to_blue t4 = new rgb_to_blue(image, image.getWidth()-(image.getWidth()/4), image.getWidth());
+             rgb_to_green t1 = new rgb_to_green(image, 0, image.getWidth()/4);
+             rgb_to_green t2 = new rgb_to_green(image, image.getWidth()/4, image.getWidth()/2);
+             rgb_to_green t3 = new rgb_to_green(image, image.getWidth()/2, image.getWidth()-(image.getWidth()/4));
+             rgb_to_green t4 = new rgb_to_green(image, image.getWidth()-(image.getWidth()/4), image.getWidth());
              
              /* threads*/
              t1.start();
@@ -82,7 +82,7 @@ public class Blue_mt
  
                     try
                     {
-                                ImageIO.write(image, "jpg", new File("../Processed_Images/lena_blue_mt.jpg"));
+                                ImageIO.write(image, "jpg", new File("../Processed_Images/lena_green_mt.jpg"));
                                 System.out.println("End, saved");
                         }
                     catch (IOException e)
