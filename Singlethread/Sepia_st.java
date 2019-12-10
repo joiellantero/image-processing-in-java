@@ -35,7 +35,8 @@ class Singlethread extends Thread{
                 int b = rgb&0xff;  
 				int tr = (int)(r*0.393 + g*0.769 + b*0.189);
                	int tg = (int)(r*0.349 + g*0.686 + b*0.168);
-              	int tb = (int)(r*0.272 + g*0.534 + b*0.131);
+                int tb = (int)(r*0.272 + g*0.534 + b*0.131);
+                  
 				if (tr > 255){
 					r = 255;
 				}else{
