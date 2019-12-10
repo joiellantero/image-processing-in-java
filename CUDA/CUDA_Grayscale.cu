@@ -1,3 +1,4 @@
+//based on code found at https://www.ylmzcmlttn.com/2019/06/07/bgr-to-rgb-with-cuda-cuda-and-opencv/
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include <string>
@@ -42,20 +43,14 @@ inline void rgb_to_gray(const Mat& input) {
 	cudaEventCreate(&stop);
 	cudaMalloc((uint8_t**)&d_input, sizeof(uint8_t) * Bytes);
 	cudaMemcpy(d_input, input.data, sizeof(uint8_t) * Bytes, cudaMemcpyHostToDevice);
-	//cudaMemcpy(d_output,output.ptr(),Bytes,cudaMemcpyHostToDevice);
 	dim3 block(16, 16);
-	//dim3 threads(4,1,1);
 	dim3 grid((input.cols + block.x - 1) / block.x, (input.rows + block.y - 1) / block.y);
-	//dim3 grid((input.cols / block.x)+1, (input.rows / block.y)+1);
-	//dim3 threadsPerBlock(4, 4,1);
-	//dim3 numBlocks(ceil((float)input.cols / threadsPerBlock.x), ceil((float)input.rows / threadsPerBlock.y),1);
 	cudaEventRecord(start, 0);
 	rgb_to_gray_kernel << <grid, block >> > (d_input, input.cols, input.rows, input.step);
 	cudaEventRecord(stop, 0);
 	cudaEventSynchronize(stop);
 	cudaMemcpy(input.data, d_input, sizeof(uint8_t) * Bytes, cudaMemcpyDeviceToHost);
 	cudaFree(d_input);
-	//	cudaDeviceSynchronize();
 	cudaEventElapsedTime(&time, start, stop);
 	printf("Time for the kernel: %f ms\n", time);
 	cudaEventDestroy(start);
@@ -67,12 +62,10 @@ int main(int argc, char const* argv[]) {
 
 	printf("Program is started\n");
 	Mat image = imread("lena.jpg");
-	//Mat image(image_bgr.rows, image_bgr.cols, CV_8UC3);
-	//cvtColor(image_bgr, image, COLOR_BGR2RGB);
-	//Mat image_out(image.rows, image.cols, CV_8UC3);
+	
 	rgb_to_gray(image);
 
-	imwrite("lena_grayscale_CUDA_2.jpg", image);
+	imwrite("lena_grayscale_CUDA.jpg", image);
 	system("pause");
 
 	return 0;

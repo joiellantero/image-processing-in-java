@@ -13,7 +13,7 @@
 using namespace cv;
 using namespace std;
 
-__global__ void red(uint8_t* input, int width, int height, int colorWidthStep)
+__global__ void green(uint8_t* input, int width, int height, int colorWidthStep)
 {
 	const int xIndex = blockIdx.x * blockDim.x + threadIdx.x;
 	const int yIndex = blockIdx.y * blockDim.y + threadIdx.y;
@@ -22,12 +22,11 @@ __global__ void red(uint8_t* input, int width, int height, int colorWidthStep)
 	{
 		const int color_tid = yIndex * colorWidthStep + (3 * xIndex);
 		input[color_tid + 0] = 0;
-		input[color_tid + 1] = 0;
-		
+		input[color_tid + 2] = 0;		
 	}
 }
 
-inline void mono_red(const Mat& input) {
+inline void mono_green(const Mat& input) {
 	const int Bytes = input.step * input.rows;
 	uint8_t* d_input;
 	cudaEvent_t start, stop;
@@ -36,10 +35,10 @@ inline void mono_red(const Mat& input) {
 	cudaEventCreate(&stop);
 	cudaMalloc((uint8_t**)&d_input, sizeof(uint8_t) * Bytes);
 	cudaMemcpy(d_input, input.data, sizeof(uint8_t) * Bytes, cudaMemcpyHostToDevice);
-	dim3 block(16, 16);
+	dim3 block(4, 4);
 	dim3 grid((input.cols + block.x - 1) / block.x, (input.rows + block.y - 1) / block.y);
 	cudaEventRecord(start, 0);
-	red << <grid, block >> > (d_input, input.cols, input.rows, input.step);
+	green << <grid, block >> > (d_input, input.cols, input.rows, input.step);
 	cudaEventRecord(stop, 0);
 	cudaEventSynchronize(stop);
 	cudaMemcpy(input.data, d_input, sizeof(uint8_t) * Bytes, cudaMemcpyDeviceToHost);
@@ -56,10 +55,10 @@ int main(int argc, char const* argv[]) {
 	printf("Program is started\n");
 	Mat image = imread("lena.jpg");
 
-	mono_red(image);
+	mono_green(image);
 
 
-	imwrite("lena_red_CUDA.jpg", image);
+	imwrite("lena_green_CUDA.jpg", image);
 	system("pause");
 
 
