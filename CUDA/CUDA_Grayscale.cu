@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 //based on code found at https://www.ylmzcmlttn.com/2019/06/07/bgr-to-rgb-with-cuda-cuda-and-opencv/
+=======
+//based on the code on https://www.ylmzcmlttn.com/2019/06/07/bgr-to-rgb-with-cuda-cuda-and-opencv/
+
+>>>>>>> bb60c310d639cf6f0b4edc8b2cfcc10bce86bbb1
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include <string>
