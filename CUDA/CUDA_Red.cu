@@ -41,7 +41,7 @@ inline void mono_red(const Mat& input) {
 	cudaEventCreate(&stop);
 	cudaMalloc((uint8_t**)&d_input, sizeof(uint8_t) * Bytes);
 	cudaMemcpy(d_input, input.data, sizeof(uint8_t) * Bytes, cudaMemcpyHostToDevice);
-	dim3 block(16, 16);
+	dim3 block(4, 4);
 	dim3 grid((input.cols + block.x - 1) / block.x, (input.rows + block.y - 1) / block.y);
 	cudaEventRecord(start, 0);
 	red << <grid, block >> > (d_input, input.cols, input.rows, input.step);
