@@ -48,6 +48,21 @@ public class Blue_st
     static String[] s = new String[100];
     static String[] name = new String[20];
     static int i = 0;
+
+    public void listFilesForFolder(final File folder){
+        for (final File fileEntry : folder.listFiles()){
+            if (fileEntry.isDirectory()){
+                listFilesForFolder(fileEntry);
+            }
+
+            else{
+                s[i] = fileEntry.getPath();
+                name[i] = fileEntry.getName();
+                System.out.println(fileEntry.getName());
+            }
+        }
+        i++;
+    }
    
     public static void main( String[] args ) throws InterruptedException
     {
@@ -88,21 +103,6 @@ public class Blue_st
             System.out.println(e);
         }
         
-        System.out.println("Total time: " + (stop-start));
-    }
-   
-    public void listFilesForFolder(final File folder){
-        for (final File fileEntry : folder.listFiles()){
-            if (fileEntry.isDirectory()){
-                listFilesForFolder(fileEntry);
-            }
-
-            else{
-                s[i] = fileEntry.getPath();
-                name[i] = fileEntry.getName();
-                System.out.println(fileEntry.getName());
-            }
-        }
-        i++;
+        System.out.println("Total time: " + (stop-start) + "ms");
     }
 }

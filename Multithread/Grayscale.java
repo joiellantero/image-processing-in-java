@@ -34,7 +34,7 @@ class rgb_to_gray extends Thread{
                         rgb = (a<<24) | (red<<16) | (green<<8) | blue; 
   
                                    
-                                    image.setRGB(x, y, rgb); 
+                                    image.setRGB(i, j, rgb); 
                    
                         }
                 }

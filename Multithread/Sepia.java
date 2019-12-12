@@ -14,7 +14,7 @@ class rgb_to_sepia extends Thread{
         private int x_end;
         private int y_end;
         BufferedImage image;
-	private int rgb;
+	    private int rgb;
         Color bw_color;
  
         public void run() {

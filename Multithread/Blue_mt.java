@@ -31,7 +31,7 @@ class rgb_to_blue extends Thread{
                             rgb = (a<<24) | (0<<16) | (0<<8) | b; 
               
                             image.setRGB(i, j, rgb); 
-                   
+
                         }
                 }
                
