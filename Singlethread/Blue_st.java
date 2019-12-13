@@ -62,7 +62,7 @@ public class Blue_st
             else{
                 s[i] = fileEntry.getPath();
                 name[i] = fileEntry.getName();
-                System.out.println(fileEntry.getName());
+                // System.out.println(fileEntry.getName());
             }
             i++;
         }
@@ -78,13 +78,14 @@ public class Blue_st
         //read raw images
         try 
         {
-            System.out.println("end------");
+            System.out.println("Reading Images...");
             for (int i = 0; i < 5; i++){
                 image[i] = ImageIO.read(new File(s[i]));
-                System.out.println(name[i]);
-                System.out.println(s[i]);
-                System.out.println(image[i]);
+                // System.out.println(name[i]);
+                // System.out.println(s[i]);
+                // System.out.println(image[i]);
             }
+            System.out.println("Read successful.");
         }
         catch (IOException e)
         {
@@ -93,6 +94,7 @@ public class Blue_st
             
         long duration[] = new long[5];
 
+        System.out.println("Processing images...");
         for(int i = 0; i < 5; i++){
             long start=System.currentTimeMillis();
 
@@ -102,24 +104,26 @@ public class Blue_st
             t1.join();
 
             long stop=System.currentTimeMillis();
-            System.out.println(name[i] + ": processed at " + (stop-start) + "ms");
+            // System.out.println(name[i] + ": processed at " + (stop-start) + "ms");
             duration[i] = stop-start;
         }
+        System.out.println("Process successful");
 
         //save processed images
         try
         {
+            System.out.println("Saving processed images...");
             for(int i = 0; i < 5; i++){
                 ImageIO.write(image[i], "jpg", new File("../Processed_Images/Blue_ST_" + name[i]));
-                System.out.println("End, saved " + name[i]); 
+                // System.out.println("End, saved " + name[i]); 
             }
+            System.out.println("Save successful");
         }
         catch (IOException e)
         {
             System.out.println(e);
         }
-
-        // BufferedWriter br = null;
+        
         String content[] = new String[5];
 
         try {
@@ -129,6 +133,7 @@ public class Blue_st
                 file.createNewFile();
             }
 
+            System.out.println("Saving timelog...");
             for (int i = 0; i < 5; i++){
                 content[i] = name[i] + ": processed at " + duration[i] + "ms";
 
@@ -137,11 +142,12 @@ public class Blue_st
                 BufferedWriter(fw);
                 br.write(content[i]);
                 br.newLine();
-                System.out.println("content >> " + content[i]);
-                System.out.println("File " + name[i] + " written Successfully");
+                // System.out.println("content >> " + content[i]);
+                // System.out.println("File " + name[i] + " written Successfully");
                 br.close();
                 fw.close();
             }
+            System.out.println("Timelog save successful.");
         } 
 
         catch (IOException ioe) {
