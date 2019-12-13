@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 
 import javax.imageio.ImageIO;
  
@@ -23,7 +25,7 @@ class rgb_to_gray extends Thread{
                                 int a = (rgb>>24)&0xff; 
                                 int r = (rgb>>16)&0xff;
                                 int g = (rgb>>8)&0xff; 
-                                int b = rgb&0xff;  
+                                int b = rgb&0xff;
                                 int red = (int)(r*0.21 + g*0.71 + b*0.07);
                                 int green = (int)(r*0.21 + g*0.71 + b*0.07);
                                 int blue = (int)(r*0.21 + g*0.71 + b*0.07);
@@ -71,16 +73,51 @@ public class Grayscale_st
                 
                 long stop=System.currentTimeMillis();
         
-                        try
-                        {
-                                ImageIO.write(image, "jpg", new File("../Processed_Images/lena_grayscale_st.jpg"));
-                                System.out.println("End, saved");
-                        }
-                        catch (IOException e)
-                        {
-                                System.out.println("Error while saving");
-                        }
+                try
+                {
+                        ImageIO.write(image, "jpg", new File("../Processed_Images/lena_grayscale_st.jpg"));
+                        System.out.println("End, saved");
+                }
+                catch (IOException e)
+                {
+                        System.out.println("Error while saving");
+                }
+
+                long duration = stop - start;
              
-                System.out.println("Total time: " + (stop-start) + "ms");
+                System.out.println("Total time: " + duration + "ms");
+
+                BufferedWriter bw = null;
+
+                try {
+                        String content = duration + "ms";
+                        
+                        File file = new File("../Execution_Time/Grayscale_ST_Execution_Timelog.txt");
+
+                        if (!file.exists()) {
+                        file.createNewFile();
+                        }
+
+                        FileWriter fw = new FileWriter(file);
+                        bw = new BufferedWriter(fw);
+                        bw.write(content);
+                        System.out.println("File written Successfully");
+                } 
+
+                catch (IOException ioe) {
+                        ioe.printStackTrace();
+                }
+
+                finally
+                { 
+                        try{
+                                if(bw!=null){
+                                        bw.close();
+                                }
+                        }
+                        catch(Exception ex){
+                                System.out.println("Error in closing the BufferedWriter"+ex);
+                        }
+                }  
         }
 }

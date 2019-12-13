@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
  
 import javax.imageio.ImageIO;
  
@@ -15,7 +17,6 @@ class rgb_to_green extends Thread{
     Color bw_color;
 
     public void run() {
-            
         for (int i=x; i<x_end; i++){
             for (int j=0; j<image.getHeight(); j++){
         
@@ -30,7 +31,6 @@ class rgb_to_green extends Thread{
                 image.setRGB(i, j, rgb); 
             }
         }
-            
     }
     rgb_to_green(BufferedImage image, int x, int x_end)
     {
@@ -49,35 +49,70 @@ public class Green_st
     public static void main( String[] args ) throws InterruptedException
     {
      
-            try
-            {
+        try
+        {
             image = ImageIO.read(new File("../Raw_Image/lena.jpg"));
-            }
-            catch (IOException e)
-            {
+        }
+        catch (IOException e)
+        {
             System.out.println(e);
-            }
+        }
+            
+        long start=System.currentTimeMillis();
+        
+        rgb_to_green t1 = new rgb_to_green(image, 0, image.getWidth());
+        
+        t1.start();
+        t1.join();
+
+        long stop=System.currentTimeMillis();
+
+        try
+        {
+            ImageIO.write(image, "jpg", new File("../Processed_Images/lena_green_st.jpg"));
+            System.out.println("End, saved");
+        }
+        catch (IOException e)
+        {
+            System.out.println("Error while saving");
+        }
+        
+        System.out.println("Total time: " + (stop-start) + "ms");
+
+        long duration = stop-start;
+
+        BufferedWriter bw = null;
+
+        try {
+                String content = duration + "ms";
                 
-            long start=System.currentTimeMillis();
-            
-            rgb_to_green t1 = new rgb_to_green(image, 0, image.getWidth());
-            
-            t1.start();
-            t1.join();
+                File file = new File("../Execution_Time/Green_ST_Execution_Timelog.txt");
 
-            long stop=System.currentTimeMillis();
+                if (!file.exists()) {
+                file.createNewFile();
+                }
 
-            try
-            {
-                ImageIO.write(image, "jpg", new File("../Processed_Images/lena_green_st.jpg"));
-                System.out.println("End, saved");
-            }
-            catch (IOException e)
-            {
-                System.out.println("Error while saving");
-            }
-            
-            System.out.println("Total time: " + (stop-start) + "ms");
+                FileWriter fw = new FileWriter(file);
+                bw = new BufferedWriter(fw);
+                bw.write(content);
+                System.out.println("File written Successfully");
+        } 
+
+        catch (IOException ioe) {
+                ioe.printStackTrace();
+        }
+        
+        finally
+        { 
+                try{
+                    if(bw!=null){
+                            bw.close();
+                    }
+                }
+                catch(Exception ex){
+                    System.out.println("Error in closing the BufferedWriter"+ex);
+                }
+        } 
     }
    
 }

@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
  
 import javax.imageio.ImageIO;
  
@@ -43,10 +45,12 @@ public class Blue_st
 {      
     static int w_total = 0;
     static int h_total = 0;
-    static BufferedImage image = null;
+    static BufferedImage[] image = new BufferedImage[5];
     static int totalTime = 0;
     static String[] s = new String[100];
+    // static String s;
     static String[] name = new String[20];
+    // static String name;
     static int i = 0;
 
     public void listFilesForFolder(final File folder){
@@ -60,8 +64,8 @@ public class Blue_st
                 name[i] = fileEntry.getName();
                 System.out.println(fileEntry.getName());
             }
+            i++;
         }
-        i++;
     }
    
     public static void main( String[] args ) throws InterruptedException
@@ -72,37 +76,88 @@ public class Blue_st
         listFiles.listFilesForFolder(folder);
 
         //read raw images
-        try
+        try 
         {
-            image = ImageIO.read(new File(s[i]));
+            System.out.println("end------");
+            for (int i = 0; i < 5; i++){
+                image[i] = ImageIO.read(new File(s[i]));
+                System.out.println(name[i]);
+                System.out.println(s[i]);
+                System.out.println(image[i]);
+            }
         }
-
-        
         catch (IOException e)
         {
             System.out.println(e);
         }
             
-        long start=System.currentTimeMillis();
-        
-        Singlethread t1 = new Singlethread(image, 0, image.getWidth());
+        long duration[] = new long[5];
 
-        t1.start();
-        t1.join();
+        for(int i = 0; i < 5; i++){
+            long start=System.currentTimeMillis();
 
-        long stop=System.currentTimeMillis();
+            Singlethread t1 = new Singlethread(image[i], 0, image[i].getWidth());
+
+            t1.start();
+            t1.join();
+
+            long stop=System.currentTimeMillis();
+            System.out.println(name[i] + ": processed at " + (stop-start) + "ms");
+            duration[i] = stop-start;
+        }
 
         //save processed images
         try
         {
-            ImageIO.write(image, "jpg", new File("../Processed_Images/" + name[i]));
-            System.out.println("End, saved");
+            for(int i = 0; i < 5; i++){
+                ImageIO.write(image[i], "jpg", new File("../Processed_Images/Blue_ST_" + name[i]));
+                System.out.println("End, saved " + name[i]); 
+            }
         }
         catch (IOException e)
         {
             System.out.println(e);
         }
+
+        // BufferedWriter br = null;
+        String content[] = new String[5];
+
+        try {
+            File file = new File("../Execution_Time/Blue_ST_Execution_Timelog.txt");
+
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            for (int i = 0; i < 5; i++){
+                content[i] = name[i] + ": processed at " + duration[i] + "ms";
+
+                FileWriter fw = new FileWriter(file, true);
+                BufferedWriter br = new
+                BufferedWriter(fw);
+                br.write(content[i]);
+                br.newLine();
+                System.out.println("content >> " + content[i]);
+                System.out.println("File " + name[i] + " written Successfully");
+                br.close();
+                fw.close();
+            }
+        } 
+
+        catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
         
-        System.out.println("Total time: " + (stop-start) + "ms");
+        finally
+        { 
+            // try{
+            //     if(br!=null){
+            //         br.close();
+            //     }
+            // }
+            // catch(Exception ex){
+            //     System.out.println("Error in closing the BufferedWriter"+ex);
+            // }
+        }  
     }
 }

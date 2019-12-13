@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
  
 import javax.imageio.ImageIO;
  
@@ -104,6 +106,40 @@ public class Sepia_st
             }
         
         System.out.println("Total time: " + (stop-start) + "ms");
-    }
-   
+
+        long duration = stop-start;
+
+        BufferedWriter bw = null;
+
+        try {
+            String content = duration + "ms";
+            
+            File file = new File("../Execution_Time/Sepia_ST_Execution_Timelog.txt");
+
+            if (!file.exists()) {
+            file.createNewFile();
+            }
+
+            FileWriter fw = new FileWriter(file);
+            bw = new BufferedWriter(fw);
+            bw.write(content);
+            System.out.println("File written Successfully");
+        } 
+
+        catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+        
+        finally
+        { 
+            try{
+                if(bw!=null){
+                        bw.close();
+                }
+            }
+            catch(Exception ex){
+                System.out.println("Error in closing the BufferedWriter"+ex);
+            }
+        } 
+    }   
 }

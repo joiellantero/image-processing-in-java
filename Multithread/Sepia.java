@@ -10,11 +10,8 @@ import javax.imageio.ImageIO;
 class rgb_to_sepia extends Thread{
        
         private int x;
-        private int y;
         private int x_end;
-        private int y_end;
         BufferedImage image;
-	    private int rgb;
         Color bw_color;
  
         public void run() {
@@ -107,13 +104,13 @@ public class Sepia
  
                     try
                     {
-                                ImageIO.write(image, "jpg", new File("../Processed_Images/lena_sepia_mt.jpg"));
-                                System.out.println("End, saved");
-                        }
+                        ImageIO.write(image, "jpg", new File("../Processed_Images/lena_sepia_mt.jpg"));
+                        System.out.println("End, saved");
+                    }
                     catch (IOException e)
                     {
-                                System.out.println("Error while saving");
-                        }
+                        System.out.println("Error while saving");
+                    }
              
              System.out.println("Total time: " + (stop-start));
     }
