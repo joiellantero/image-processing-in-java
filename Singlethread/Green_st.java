@@ -8,6 +8,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
  
 import javax.imageio.ImageIO;
+
+class numPhoto {
+    public static int num = 5;
+}
  
 class rgb_to_green extends Thread{
        
@@ -43,43 +47,80 @@ public class Green_st
 {      
     static int w_total = 0;
     static int h_total = 0;
-    static BufferedImage image = null;
+    static BufferedImage[] image = new BufferedImage[numPhoto.num];
     static int totalTime = 0;
+    static String[] s = new String[100];
+    static String[] name = new String[20];
+    static int i = 0;
+
+    public void listFilesForFolder(final File folder){
+        for (final File fileEntry : folder.listFiles()){
+            if (fileEntry.isDirectory()){
+                listFilesForFolder(fileEntry);
+            }
+
+            else{
+                s[i] = fileEntry.getPath();
+                name[i] = fileEntry.getName();
+                // System.out.println(fileEntry.getName());
+            }
+            i++;
+        }
+    }
    
     public static void main( String[] args ) throws InterruptedException
     {
+        final File folder = new File("../Raw_Image");
+        Blue_st listFiles = new Blue_st();
+        listFiles.listFilesForFolder(folder);
      
-        try
+        //read raw images
+        try 
         {
-            image = ImageIO.read(new File("../Raw_Image/lena.jpg"));
+            System.out.println("Reading Images...");
+            for (int i = 0; i < numPhoto.num; i++){
+                image[i] = ImageIO.read(new File(s[i]));
+            }
+            System.out.println("Read successful.");
         }
         catch (IOException e)
         {
             System.out.println(e);
         }
             
-        long start=System.currentTimeMillis();
-        
-        rgb_to_green t1 = new rgb_to_green(image, 0, image.getWidth());
-        
-        t1.start();
-        t1.join();
+        long duration[] = new long[numPhoto.num];
 
-        long stop=System.currentTimeMillis();
+        System.out.println("Processing images...");
+        for(int i = 0; i < numPhoto.num; i++){
+            long start=System.currentTimeMillis();
+        
+            rgb_to_green t1 = new rgb_to_green(image[i], 0, image[i].getWidth());
+            
+            t1.start();
+            t1.join();
 
+            long stop=System.currentTimeMillis();
+
+            duration[i] = stop-start;
+        }
+        System.out.println("Process successful");
+
+        //save processed images
         try
         {
-            ImageIO.write(image, "jpg", new File("../Processed_Images/lena_green_st.jpg"));
-            System.out.println("End, saved");
+            System.out.println("Saving processed images...");
+            for(int i = 0; i < numPhoto.num; i++){
+                ImageIO.write(image[i], "jpg", new File("../Processed_Images/Blue_ST_" + name[i]));
+                // System.out.println("End, saved " + name[i]); 
+            }
+            System.out.println("Save successful");
         }
         catch (IOException e)
         {
-            System.out.println("Error while saving");
+            System.out.println(e);
         }
         
-        System.out.println("Total time: " + (stop-start) + "ms");
-
-        long duration = stop-start;
+        
 
         BufferedWriter bw = null;
 

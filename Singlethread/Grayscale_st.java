@@ -49,59 +49,100 @@ public class Grayscale_st
 {      
         static int w_total = 0;
         static int h_total = 0;
-        static BufferedImage image = null;
+        static BufferedImage[] image = new BufferedImage[5];
         static int totalTime = 0;
+        static String[] s = new String[100];
+        static String[] name = new String[20];
+        static int i = 0;
    
+        public void listFilesForFolder(final File folder){
+                for (final File fileEntry : folder.listFiles()){
+                    if (fileEntry.isDirectory()){
+                        listFilesForFolder(fileEntry);
+                    }
+        
+                    else{
+                        s[i] = fileEntry.getPath();
+                        name[i] = fileEntry.getName();
+                    }
+                    i++;
+                }
+        }
+
         public static void main( String[] args ) throws InterruptedException
         {
+                final File folder = new File("../Raw_Image");
+                Grayscale_st listFiles = new Grayscale_st();
+                listFiles.listFilesForFolder(folder);
      
                 try
                 {
-                        image = ImageIO.read(new File("../Raw_Image/lena.jpg"));
+                        System.out.println("Reading Images...");
+                        for (int i = 0; i < 5; i++){
+                                image[i] = ImageIO.read(new File(s[i]));
+                        }
+                        System.out.println("Read successful.");
                 }
                 catch (IOException e)
                 {
                         System.out.println(e);
                 }
                         
-                long start=System.currentTimeMillis();
+                long duration[] = new long[5];
+
+                System.out.println("Processing images...");
+                for(int i = 0; i < 5; i++){
+                        long start=System.currentTimeMillis();
+
+                        rgb_to_gray t1 = new rgb_to_gray(image[i], 0, image[i].getWidth());
+
+                        t1.start();
+                        t1.join();
                 
-                rgb_to_gray t1 = new rgb_to_gray(image, 0, image.getWidth());
-                
-                t1.start();
-                t1.join();
-                
-                long stop=System.currentTimeMillis();
+                        long stop=System.currentTimeMillis();
+                        duration[i] = stop-start;
+                }
+                System.out.println("Process successful");
         
+                 //save processed images
                 try
                 {
-                        ImageIO.write(image, "jpg", new File("../Processed_Images/lena_grayscale_st.jpg"));
-                        System.out.println("End, saved");
+                        System.out.println("Saving processed images...");
+                        for(int i = 0; i < 5; i++){
+                                ImageIO.write(image[i], "jpg", new File("../Processed_Images/Grayscale_ST_" + name[i]));
+                                // System.out.println("End, saved " + name[i]); 
+                        }
+                        System.out.println("Save successful");
                 }
                 catch (IOException e)
                 {
-                        System.out.println("Error while saving");
+                        System.out.println(e);
                 }
-
-                long duration = stop - start;
              
-                System.out.println("Total time: " + duration + "ms");
-
-                BufferedWriter bw = null;
+                String content[] = new String[5];
 
                 try {
-                        String content = duration + "ms";
-                        
                         File file = new File("../Execution_Time/Grayscale_ST_Execution_Timelog.txt");
 
                         if (!file.exists()) {
-                        file.createNewFile();
+                                file.createNewFile();
                         }
 
-                        FileWriter fw = new FileWriter(file);
-                        bw = new BufferedWriter(fw);
-                        bw.write(content);
-                        System.out.println("File written Successfully");
+                        System.out.println("Saving timelog...");
+                        for (int i = 0; i < 5; i++){
+                                content[i] = name[i] + ": processed at " + duration[i] + "ms";
+
+                                FileWriter fw = new FileWriter(file, true);
+                                BufferedWriter br = new
+                                BufferedWriter(fw);
+                                br.write(content[i]);
+                                br.newLine();
+                                // System.out.println("content >> " + content[i]);
+                                // System.out.println("File " + name[i] + " written Successfully");
+                                br.close();
+                                fw.close();
+                        }
+                        System.out.println("Timelog save successful.");
                 } 
 
                 catch (IOException ioe) {
@@ -110,14 +151,6 @@ public class Grayscale_st
 
                 finally
                 { 
-                        try{
-                                if(bw!=null){
-                                        bw.close();
-                                }
-                        }
-                        catch(Exception ex){
-                                System.out.println("Error in closing the BufferedWriter"+ex);
-                        }
                 }  
         }
 }

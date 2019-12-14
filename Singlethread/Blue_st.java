@@ -8,6 +8,10 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
  
 import javax.imageio.ImageIO;
+
+class numPhoto {
+    public static int num = 5;
+}
  
 class Singlethread extends Thread{
        
@@ -48,9 +52,7 @@ public class Blue_st
     static BufferedImage[] image = new BufferedImage[5];
     static int totalTime = 0;
     static String[] s = new String[100];
-    // static String s;
     static String[] name = new String[20];
-    // static String name;
     static int i = 0;
 
     public void listFilesForFolder(final File folder){
@@ -79,7 +81,7 @@ public class Blue_st
         try 
         {
             System.out.println("Reading Images...");
-            for (int i = 0; i < 5; i++){
+            for (int i = 0; i < numPhoto.num; i++){
                 image[i] = ImageIO.read(new File(s[i]));
                 // System.out.println(name[i]);
                 // System.out.println(s[i]);
@@ -92,10 +94,10 @@ public class Blue_st
             System.out.println(e);
         }
             
-        long duration[] = new long[5];
+        long duration[] = new long[numPhoto.num];
 
         System.out.println("Processing images...");
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < numPhoto.num; i++){
             long start=System.currentTimeMillis();
 
             Singlethread t1 = new Singlethread(image[i], 0, image[i].getWidth());
@@ -113,7 +115,7 @@ public class Blue_st
         try
         {
             System.out.println("Saving processed images...");
-            for(int i = 0; i < 5; i++){
+            for(int i = 0; i < numPhoto.num; i++){
                 ImageIO.write(image[i], "jpg", new File("../Processed_Images/Blue_ST_" + name[i]));
                 // System.out.println("End, saved " + name[i]); 
             }
@@ -123,8 +125,8 @@ public class Blue_st
         {
             System.out.println(e);
         }
-        
-        String content[] = new String[5];
+
+        String content[] = new String[numPhoto.num];
 
         try {
             File file = new File("../Execution_Time/Blue_ST_Execution_Timelog.txt");
@@ -134,7 +136,7 @@ public class Blue_st
             }
 
             System.out.println("Saving timelog...");
-            for (int i = 0; i < 5; i++){
+            for (int i = 0; i < numPhoto.num; i++){
                 content[i] = name[i] + ": processed at " + duration[i] + "ms";
 
                 FileWriter fw = new FileWriter(file, true);
