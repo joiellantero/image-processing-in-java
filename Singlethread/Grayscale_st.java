@@ -24,7 +24,6 @@ class rgb_to_gray extends Thread{
                
                 for (int i=x; i<x_end; i++){
                         for (int j=0; j<image.getHeight(); j++){
-                                //Color color = new Color(image.getRGB(i,j));
                                 int rgb = image.getRGB(i,j);
                                 int a = (rgb>>24)&0xff; 
                                 int r = (rgb>>16)&0xff;

@@ -4,17 +4,20 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
  
 import javax.imageio.ImageIO;
+
+class Photo {
+        public static int num = 5;
+}
  
 class rgb_to_blue extends Thread{
        
         private int x;
-        private int y;
         private int x_end;
-        private int y_end;
         BufferedImage image;
-	private int rgb;
         Color bw_color;
  
         public void run() {
@@ -47,52 +50,85 @@ public class Blue_mt
 {      
         static int w_total = 0;
         static int h_total = 0;
-    static BufferedImage image = null;
-    static int totalTime = 0;
-   
-    public static void main( String[] args ) throws InterruptedException
-    {
+        static BufferedImage[] image = new BufferedImage[Photo.num];
+        static int totalTime = 0;
+        static String[] s = new String[100];
+        static String[] name = new String[20];
+        static int i = 0;
+
+        public void listFilesForFolder(final File folder){
+                for (final File fileEntry : folder.listFiles()){
+                    if (fileEntry.isDirectory()){
+                        listFilesForFolder(fileEntry);
+                    }
+        
+                    else{
+                        s[i] = fileEntry.getPath();
+                        name[i] = fileEntry.getName();
+                    }
+                    i++;
+                }
+        }
+        public static void main( String[] args ) throws InterruptedException
+        {
      
-             try
-             {
-                        image = ImageIO.read(new File("../Raw_Image/lena.jpg"));
-             }
-           
-             
-             catch (IOException e)
-             {
+                final File folder = new File("../Raw_Image");
+                Grayscale_st listFiles = new Grayscale_st();
+                listFiles.listFilesForFolder(folder);
+     
+                try
+                {
+                        System.out.println("Reading Images...");
+                        for (int i = 0; i < Photo.num; i++){
+                                image[i] = ImageIO.read(new File(s[i]));
+                        }
+                        System.out.println("Read successful.");
+                }
+                catch (IOException e)
+                {
                         System.out.println(e);
-             }
-                 
-             long start=System.currentTimeMillis();
-             
-             rgb_to_blue t1 = new rgb_to_blue(image, 0, image.getWidth()/4);
-             rgb_to_blue t2 = new rgb_to_blue(image, image.getWidth()/4, image.getWidth()/2);
-             rgb_to_blue t3 = new rgb_to_blue(image, image.getWidth()/2, image.getWidth()-(image.getWidth()/4));
-             rgb_to_blue t4 = new rgb_to_blue(image, image.getWidth()-(image.getWidth()/4), image.getWidth());
-             
-             /* threads*/
-             t1.start();
-             t2.start();
-             t3.start();
-             t4.start();
-             t1.join();t2.join();t3.join();t4.join();
-             
-             
- 
-             long stop=System.currentTimeMillis();
- 
-                    try
-                    {
-                                ImageIO.write(image, "jpg", new File("../Processed_Images/lena_blue_mt.jpg"));
-                                System.out.println("End, saved");
+                }
+
+                long duration[] = new long[Photo.num];
+
+                System.out.println("Processing images...");
+                for(int i = 0; i < Photo.num; i++){
+                        long start=System.currentTimeMillis();
+                
+                        rgb_to_blue t1 = new rgb_to_blue(image[i], 0, image[i].getWidth()/4);
+                        rgb_to_blue t2 = new rgb_to_blue(image[i], image[i].getWidth()/4, image[i].getWidth()/2);
+                        rgb_to_blue t3 = new rgb_to_blue(image[i], image[i].getWidth()/2, image[i].getWidth()/4);
+                        rgb_to_blue t4 = new rgb_to_blue(image[i], image[i].getWidth()-(image[i].getWidth()/4), image[i].getWidth());
+                        
+                        /* threads*/
+                        t1.start();
+                        t2.start();
+                        t3.start();
+                        t4.start();
+                        t1.join();
+                        t2.join();
+                        t3.join();
+                        t4.join();
+        
+                        long stop=System.currentTimeMillis();
+                        duration[i] = stop-start;
+                }
+                System.out.println("Process successful");
+
+                //save processed images
+                try
+                {
+                        System.out.println("Saving processed images...");
+                        for(int i = 0; i < Photo.num; i++){
+                                ImageIO.write(image[i], "jpg", new File("../Processed_Images/Grayscale_ST_" + name[i]));
+                                // System.out.println("End, saved " + name[i]); 
                         }
-                    catch (IOException e)
-                    {
-                                System.out.println("Error while saving");
-                        }
-             
-             System.out.println("Total time: " + (stop-start));
-    }
+                        System.out.println("Save successful");
+                }
+                catch (IOException e)
+                {
+                        System.out.println(e);
+                }
+        }
    
 }

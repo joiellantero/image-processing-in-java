@@ -110,7 +110,7 @@ public class Green_st
         {
             System.out.println("Saving processed images...");
             for(int i = 0; i < Photo.num; i++){
-                ImageIO.write(image[i], "jpg", new File("../Processed_Images/Blue_ST_" + name[i]));
+                ImageIO.write(image[i], "jpg", new File("../Processed_Images/Green_ST_" + name[i]));
                 // System.out.println("End, saved " + name[i]); 
             }
             System.out.println("Save successful");
