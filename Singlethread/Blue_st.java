@@ -9,7 +9,7 @@ import java.io.FileWriter;
  
 import javax.imageio.ImageIO;
 
-class numPhoto {
+class Photo {
     public static int num = 5;
 }
  
@@ -81,7 +81,7 @@ public class Blue_st
         try 
         {
             System.out.println("Reading Images...");
-            for (int i = 0; i < numPhoto.num; i++){
+            for (int i = 0; i < Photo.num; i++){
                 image[i] = ImageIO.read(new File(s[i]));
                 // System.out.println(name[i]);
                 // System.out.println(s[i]);
@@ -94,10 +94,10 @@ public class Blue_st
             System.out.println(e);
         }
             
-        long duration[] = new long[numPhoto.num];
+        long duration[] = new long[Photo.num];
 
         System.out.println("Processing images...");
-        for(int i = 0; i < numPhoto.num; i++){
+        for(int i = 0; i < Photo.num; i++){
             long start=System.currentTimeMillis();
 
             Singlethread t1 = new Singlethread(image[i], 0, image[i].getWidth());
@@ -115,7 +115,7 @@ public class Blue_st
         try
         {
             System.out.println("Saving processed images...");
-            for(int i = 0; i < numPhoto.num; i++){
+            for(int i = 0; i < Photo.num; i++){
                 ImageIO.write(image[i], "jpg", new File("../Processed_Images/Blue_ST_" + name[i]));
                 // System.out.println("End, saved " + name[i]); 
             }
@@ -126,7 +126,7 @@ public class Blue_st
             System.out.println(e);
         }
 
-        String content[] = new String[numPhoto.num];
+        String content[] = new String[Photo.num];
 
         try {
             File file = new File("../Execution_Time/Blue_ST_Execution_Timelog.txt");
@@ -136,7 +136,7 @@ public class Blue_st
             }
 
             System.out.println("Saving timelog...");
-            for (int i = 0; i < numPhoto.num; i++){
+            for (int i = 0; i < Photo.num; i++){
                 content[i] = name[i] + ": processed at " + duration[i] + "ms";
 
                 FileWriter fw = new FileWriter(file, true);

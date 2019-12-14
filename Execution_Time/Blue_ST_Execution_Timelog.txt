@@ -1,5 +1,0 @@
-lena.jpg: processed at 78ms
-bird.jpg: processed at 18ms
-flower.jpg: processed at 716ms
-svt2.jpg: processed at 434ms
-svt.jpg: processed at 92ms

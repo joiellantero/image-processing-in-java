@@ -9,7 +9,7 @@ import java.io.FileWriter;
  
 import javax.imageio.ImageIO;
 
-class numPhoto {
+class Photo {
     public static int num = 5;
 }
  
@@ -47,7 +47,7 @@ public class Green_st
 {      
     static int w_total = 0;
     static int h_total = 0;
-    static BufferedImage[] image = new BufferedImage[numPhoto.num];
+    static BufferedImage[] image = new BufferedImage[Photo.num];
     static int totalTime = 0;
     static String[] s = new String[100];
     static String[] name = new String[20];
@@ -78,7 +78,7 @@ public class Green_st
         try 
         {
             System.out.println("Reading Images...");
-            for (int i = 0; i < numPhoto.num; i++){
+            for (int i = 0; i < Photo.num; i++){
                 image[i] = ImageIO.read(new File(s[i]));
             }
             System.out.println("Read successful.");
@@ -88,10 +88,10 @@ public class Green_st
             System.out.println(e);
         }
             
-        long duration[] = new long[numPhoto.num];
+        long duration[] = new long[Photo.num];
 
         System.out.println("Processing images...");
-        for(int i = 0; i < numPhoto.num; i++){
+        for(int i = 0; i < Photo.num; i++){
             long start=System.currentTimeMillis();
         
             rgb_to_green t1 = new rgb_to_green(image[i], 0, image[i].getWidth());
@@ -109,7 +109,7 @@ public class Green_st
         try
         {
             System.out.println("Saving processed images...");
-            for(int i = 0; i < numPhoto.num; i++){
+            for(int i = 0; i < Photo.num; i++){
                 ImageIO.write(image[i], "jpg", new File("../Processed_Images/Blue_ST_" + name[i]));
                 // System.out.println("End, saved " + name[i]); 
             }
@@ -120,39 +120,38 @@ public class Green_st
             System.out.println(e);
         }
         
-        
-
-        BufferedWriter bw = null;
+        String content[] = new String[Photo.num];
 
         try {
-                String content = duration + "ms";
-                
-                File file = new File("../Execution_Time/Green_ST_Execution_Timelog.txt");
+            File file = new File("../Execution_Time/Green_ST_Execution_Timelog.txt");
 
-                if (!file.exists()) {
+            if (!file.exists()) {
                 file.createNewFile();
-                }
+            }
 
-                FileWriter fw = new FileWriter(file);
-                bw = new BufferedWriter(fw);
-                bw.write(content);
-                System.out.println("File written Successfully");
+            System.out.println("Saving timelog...");
+            for (int i = 0; i < Photo.num; i++){
+                content[i] = name[i] + ": processed at " + duration[i] + "ms";
+
+                FileWriter fw = new FileWriter(file, true);
+                BufferedWriter br = new
+                BufferedWriter(fw);
+                br.write(content[i]);
+                br.newLine();
+                // System.out.println("content >> " + content[i]);
+                // System.out.println("File " + name[i] + " written Successfully");
+                br.close();
+                fw.close();
+            }
+            System.out.println("Timelog save successful.");
         } 
 
         catch (IOException ioe) {
-                ioe.printStackTrace();
+            ioe.printStackTrace();
         }
         
         finally
         { 
-                try{
-                    if(bw!=null){
-                            bw.close();
-                    }
-                }
-                catch(Exception ex){
-                    System.out.println("Error in closing the BufferedWriter"+ex);
-                }
         } 
     }
    

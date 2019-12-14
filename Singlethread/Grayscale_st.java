@@ -9,6 +9,10 @@ import java.io.FileWriter;
 
 import javax.imageio.ImageIO;
  
+class Photo {
+        public static int num = 5;
+}
+
 class rgb_to_gray extends Thread{
        
         private int x;
@@ -49,7 +53,7 @@ public class Grayscale_st
 {      
         static int w_total = 0;
         static int h_total = 0;
-        static BufferedImage[] image = new BufferedImage[5];
+        static BufferedImage[] image = new BufferedImage[Photo.num];
         static int totalTime = 0;
         static String[] s = new String[100];
         static String[] name = new String[20];
@@ -78,7 +82,7 @@ public class Grayscale_st
                 try
                 {
                         System.out.println("Reading Images...");
-                        for (int i = 0; i < 5; i++){
+                        for (int i = 0; i < Photo.num; i++){
                                 image[i] = ImageIO.read(new File(s[i]));
                         }
                         System.out.println("Read successful.");
@@ -88,10 +92,10 @@ public class Grayscale_st
                         System.out.println(e);
                 }
                         
-                long duration[] = new long[5];
+                long duration[] = new long[Photo.num];
 
                 System.out.println("Processing images...");
-                for(int i = 0; i < 5; i++){
+                for(int i = 0; i < Photo.num; i++){
                         long start=System.currentTimeMillis();
 
                         rgb_to_gray t1 = new rgb_to_gray(image[i], 0, image[i].getWidth());
@@ -108,7 +112,7 @@ public class Grayscale_st
                 try
                 {
                         System.out.println("Saving processed images...");
-                        for(int i = 0; i < 5; i++){
+                        for(int i = 0; i < Photo.num; i++){
                                 ImageIO.write(image[i], "jpg", new File("../Processed_Images/Grayscale_ST_" + name[i]));
                                 // System.out.println("End, saved " + name[i]); 
                         }
@@ -119,7 +123,7 @@ public class Grayscale_st
                         System.out.println(e);
                 }
              
-                String content[] = new String[5];
+                String content[] = new String[Photo.num];
 
                 try {
                         File file = new File("../Execution_Time/Grayscale_ST_Execution_Timelog.txt");
@@ -129,7 +133,7 @@ public class Grayscale_st
                         }
 
                         System.out.println("Saving timelog...");
-                        for (int i = 0; i < 5; i++){
+                        for (int i = 0; i < Photo.num; i++){
                                 content[i] = name[i] + ": processed at " + duration[i] + "ms";
 
                                 FileWriter fw = new FileWriter(file, true);
