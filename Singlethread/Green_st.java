@@ -10,47 +10,48 @@ import java.io.FileWriter;
 import javax.imageio.ImageIO;
 
 class Photo {
-    public static int num = 5;
+    public static int num = 1000;
 }
  
-class rgb_to_green extends Thread{
+class Singlethread extends Thread{
        
-    private int x;
-    private int x_end;
-    BufferedImage image;
-    Color bw_color;
-
-    public void run() {
-        for (int i=x; i<x_end; i++){
-            for (int j=0; j<image.getHeight(); j++){
-        
-                int rgb = image.getRGB(i,j); 
-
-                int a = (rgb>>24)&0xff; 
-                int g = (rgb>>8)&0xff; 
-
-                // set new RGB (blue still the same and then 0 for red and green)
-                rgb = (a<<24) | (0<<16) | (g<<8) | 0; 
-
-                image.setRGB(i, j, rgb); 
-            }
+        private int x;
+        private int x_end;
+        BufferedImage image;
+        Color bw_color;
+ 
+        public void run() {
+            for (int i=x; i<x_end; i++){
+                for (int j=0; j<image.getHeight(); j++){
+            
+                    int rgb = image.getRGB(i,j); 
+  
+                	int a = (rgb>>24)&0xff; 
+                	int g = (rgb>>8)&0xff; 
+  
+	                // set new RGB (green still the same and then 0 for red and blue)
+    	            rgb = (a<<24) | (0<<16) | (g<<8) | 0; 
+  
+    	            image.setRGB(i, j, rgb); 
+                }
+            }   
         }
-    }
-    rgb_to_green(BufferedImage image, int x, int x_end)
-    {
-        this.x = x;
-        this.x_end = x_end;
-        this.image = image;
-    }       
+        Singlethread(BufferedImage image, int x, int x_end)
+        {
+                this.x = x;
+                this.x_end = x_end;
+                this.image = image;
+        }       
 }
+
 public class Green_st
 {      
     static int w_total = 0;
     static int h_total = 0;
-    static BufferedImage[] image = new BufferedImage[Photo.num];
+    static BufferedImage image;
     static int totalTime = 0;
-    static String[] s = new String[100];
-    static String[] name = new String[20];
+    static String[] s = new String[1000];
+    static String[] name = new String[1000];
     static int i = 0;
 
     public void listFilesForFolder(final File folder){
@@ -70,60 +71,50 @@ public class Green_st
    
     public static void main( String[] args ) throws InterruptedException
     {
-        final File folder = new File("../Raw_Image");
-        Blue_st listFiles = new Blue_st();
+
+        final File folder = new File("./test_images/");
+        Green_st listFiles = new Green_st();
         listFiles.listFilesForFolder(folder);
-     
-        //read raw images
-        try 
-        {
-            System.out.println("Reading Images...");
-            for (int i = 0; i < Photo.num; i++){
-                image[i] = ImageIO.read(new File(s[i]));
-            }
-            System.out.println("Read successful.");
-        }
-        catch (IOException e)
-        {
-            System.out.println(e);
-        }
-            
+
         long duration[] = new long[Photo.num];
 
         System.out.println("Processing images...");
         for(int i = 0; i < Photo.num; i++){
-            long start=System.currentTimeMillis();
-        
-            rgb_to_green t1 = new rgb_to_green(image[i], 0, image[i].getWidth());
-            
+            //read raw images
+		    try 
+		    {
+		        image = ImageIO.read(new File(s[i]));
+		    }
+		    catch (IOException e)
+		    {
+		        System.out.println(e);
+		    }
+			long start=System.currentTimeMillis();
+
+            Singlethread t1 = new Singlethread(image, 0, image.getWidth());
+
             t1.start();
             t1.join();
 
             long stop=System.currentTimeMillis();
-
+            // System.out.println(name[i] + ": processed at " + (stop-start) + "ms");
             duration[i] = stop-start;
+			try
+		    {
+		        ImageIO.write(image, "jpg", new File("./processed_images/Green_ST_" + name[i]));
+		    }
+		    catch (IOException e)
+		    {
+		        System.out.println(e);
+		    }
         }
         System.out.println("Process successful");
 
         //save processed images
-        try
-        {
-            System.out.println("Saving processed images...");
-            for(int i = 0; i < Photo.num; i++){
-                ImageIO.write(image[i], "jpg", new File("../Processed_Images/Green_ST_" + name[i]));
-                // System.out.println("End, saved " + name[i]); 
-            }
-            System.out.println("Save successful");
-        }
-        catch (IOException e)
-        {
-            System.out.println(e);
-        }
-        
         String content[] = new String[Photo.num];
 
         try {
-            File file = new File("../Execution_Time/Green_ST_Execution_Timelog.txt");
+            File file = new File("./Execution_Time/Green_ST_Execution_Timelog.txt");
 
             if (!file.exists()) {
                 file.createNewFile();
@@ -131,7 +122,7 @@ public class Green_st
 
             System.out.println("Saving timelog...");
             for (int i = 0; i < Photo.num; i++){
-                content[i] = name[i] + ": processed at " + duration[i] + "ms";
+                content[i] = String.valueOf(duration[i]);//name[i] + ": processed at " + duration[i] + "ms";
 
                 FileWriter fw = new FileWriter(file, true);
                 BufferedWriter br = new
@@ -152,7 +143,6 @@ public class Green_st
         
         finally
         { 
-        } 
+        }  
     }
-   
 }

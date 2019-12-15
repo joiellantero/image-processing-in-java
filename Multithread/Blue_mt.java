@@ -10,7 +10,7 @@ import java.io.FileWriter;
 import javax.imageio.ImageIO;
 
 class Photo {
-        public static int num = 5;
+    public static int num = 1000;
 }
  
 class rgb_to_blue extends Thread{
@@ -21,23 +21,21 @@ class rgb_to_blue extends Thread{
         Color bw_color;
  
         public void run() {
-               
-                 for (int i=x; i<x_end; i++){
-                        for (int j=0; j<image.getHeight(); j++){
-                   
-                            int rgb = image.getRGB(i,j); 
-  
-                            int a = (rgb>>24)&0xff; 
-                            int b = (rgb)&0xff; 
-              
-                            // set new RGB (blue still the same and then 0 for red and green)
-                            rgb = (a<<24) | (0<<16) | (0<<8) | b; 
-              
-                            image.setRGB(i, j, rgb); 
+            for (int i=x; i<x_end; i++){
+                for (int j=0; j<image.getHeight(); j++){
+            
+                    int rgb = image.getRGB(i,j); 
 
-                        }
+                    int a = (rgb>>24)&0xff; 
+                    int b = (rgb)&0xff; 
+        
+                    // set new RGB (blue still the same and then 0 for red and green)
+                    rgb = (a<<24) | (0<<16) | (0<<8) | b; 
+        
+                    image.setRGB(i, j, rgb); 
+            
                 }
-               
+            }   
         }
         rgb_to_blue(BufferedImage image, int x, int x_end)
         {
@@ -46,89 +44,121 @@ class rgb_to_blue extends Thread{
                 this.image = image;
         }       
 }
+
 public class Blue_mt
 {      
-        static int w_total = 0;
-        static int h_total = 0;
-        static BufferedImage[] image = new BufferedImage[Photo.num];
-        static int totalTime = 0;
-        static String[] s = new String[100];
-        static String[] name = new String[20];
-        static int i = 0;
+    static int w_total = 0;
+    static int h_total = 0;
+    static BufferedImage image;
+    static int totalTime = 0;
+    static String[] s = new String[1000];
+    static String[] name = new String[1000];
+    static int i = 0;
 
-        public void listFilesForFolder(final File folder){
-                for (final File fileEntry : folder.listFiles()){
-                    if (fileEntry.isDirectory()){
-                        listFilesForFolder(fileEntry);
-                    }
-        
-                    else{
-                        s[i] = fileEntry.getPath();
-                        name[i] = fileEntry.getName();
-                    }
-                    i++;
-                }
+    public void listFilesForFolder(final File folder){
+        for (final File fileEntry : folder.listFiles()){
+            if (fileEntry.isDirectory()){
+                listFilesForFolder(fileEntry);
+            }
+
+            else{
+                s[i] = fileEntry.getPath();
+                name[i] = fileEntry.getName();
+                // System.out.println(fileEntry.getName());
+            }
+            i++;
         }
-        public static void main( String[] args ) throws InterruptedException
-        {
-     
-                final File folder = new File("../Raw_Image");
-                Grayscale_st listFiles = new Grayscale_st();
-                listFiles.listFilesForFolder(folder);
-     
-                try
-                {
-                        System.out.println("Reading Images...");
-                        for (int i = 0; i < Photo.num; i++){
-                                image[i] = ImageIO.read(new File(s[i]));
-                        }
-                        System.out.println("Read successful.");
-                }
-                catch (IOException e)
-                {
-                        System.out.println(e);
-                }
-
-                long duration[] = new long[Photo.num];
-
-                System.out.println("Processing images...");
-                for(int i = 0; i < Photo.num; i++){
-                        long start=System.currentTimeMillis();
-                
-                        rgb_to_blue t1 = new rgb_to_blue(image[i], 0, image[i].getWidth()/4);
-                        rgb_to_blue t2 = new rgb_to_blue(image[i], image[i].getWidth()/4, image[i].getWidth()/2);
-                        rgb_to_blue t3 = new rgb_to_blue(image[i], image[i].getWidth()/2, image[i].getWidth()/4);
-                        rgb_to_blue t4 = new rgb_to_blue(image[i], image[i].getWidth()-(image[i].getWidth()/4), image[i].getWidth());
-                        
-                        /* threads*/
-                        t1.start();
-                        t2.start();
-                        t3.start();
-                        t4.start();
-                        t1.join();
-                        t2.join();
-                        t3.join();
-                        t4.join();
-        
-                        long stop=System.currentTimeMillis();
-                        duration[i] = stop-start;
-                }
-                System.out.println("Process successful");
-
-                //save processed images
-                try
-                {
-                        System.out.println("Saving processed images...");
-                        for(int i = 0; i < Photo.num; i++){
-                                ImageIO.write(image[i], "jpg", new File("../Processed_Images/Grayscale_ST_" + name[i]));
-                                // System.out.println("End, saved " + name[i]); 
-                        }
-                        System.out.println("Save successful");
-                }
-                catch (IOException e)
-                {
-                        System.out.println(e);
-                }
-        }
+    }
    
+    public static void main( String[] args ) throws InterruptedException
+    {
+
+        final File folder = new File("./test_images/");
+        Blue_mt listFiles = new Blue_mt();
+        listFiles.listFilesForFolder(folder);
+
+        long duration[] = new long[Photo.num];
+
+        for(int i = 0; i < Photo.num; i++){
+		try 
+		{
+		    image = ImageIO.read(new File(s[i]));
+		}
+		catch (IOException e)
+		{
+		    System.out.println(e);
+		}               
+		long start=System.currentTimeMillis();
+	        rgb_to_blue t1 = new rgb_to_blue(image, 0, image.getWidth()/4);
+                rgb_to_blue t2 = new rgb_to_blue(image, image.getWidth()/4, image.getWidth()/2);
+                rgb_to_blue t3 = new rgb_to_blue(image, image.getWidth()/2, image.getWidth()-(image.getWidth()/4));
+                rgb_to_blue t4 = new rgb_to_blue(image, image.getWidth()-(image.getWidth()/4), image.getWidth());
+                        
+                /* threads*/
+                t1.start();
+                t2.start();
+                t3.start();
+                t4.start();
+                t1.join();
+                t2.join();
+                t3.join();
+                t4.join();
+        
+                long stop=System.currentTimeMillis();
+                duration[i] = stop-start;
+
+		try
+		{
+		    ImageIO.write(image, "jpg", new File("./processed_images/Blue_MT_" + name[i]));
+		}
+		catch (IOException e)
+		{
+		    System.out.println(e);
+		}
+        }
+        System.out.println("Process successful");
+        
+
+        String content[] = new String[Photo.num];
+
+        try {
+            File file = new File("./Execution_Time/Blue_MT_Execution_Timelog.txt");
+
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            System.out.println("Saving timelog...");
+            for (int i = 0; i < Photo.num; i++){
+                content[i] = String.valueOf(duration[i]);//name[i] + ": processed at " + duration[i] + "ms";
+
+                FileWriter fw = new FileWriter(file, true);
+                BufferedWriter br = new
+                BufferedWriter(fw);
+                br.write(content[i]);
+                br.newLine();
+                // System.out.println("content >> " + content[i]);
+                // System.out.println("File " + name[i] + " written Successfully");
+                br.close();
+                fw.close();
+            }
+            System.out.println("Timelog save successful.");
+        } 
+
+        catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+        
+        finally
+        { 
+            // try{
+            //     if(br!=null){
+            //         br.close();
+            //     }
+            // }
+            // catch(Exception ex){
+            //     System.out.println("Error in closing the BufferedWriter"+ex);
+            // }
+        }  
+    }
 }

@@ -1,22 +1,19 @@
-<<<<<<< HEAD
 //based on code found at https://www.ylmzcmlttn.com/2019/06/07/bgr-to-rgb-with-cuda-cuda-and-opencv/
-=======
-//based on the code on https://www.ylmzcmlttn.com/2019/06/07/bgr-to-rgb-with-cuda-cuda-and-opencv/
-
->>>>>>> bb60c310d639cf6f0b4edc8b2cfcc10bce86bbb1
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include <string>
+#include <string.h>
 #include <cuda.h>
-#include <cuda_runtime.h>
-#include <cuda_runtime_api.h>
-#include <cuda_device_runtime_api.h>
 #include <stdio.h>
 #include <opencv2\opencv.hpp>
 #include <opencv2\core.hpp>
 #include <opencv2\highgui.hpp>
 #include <opencv2\imgproc.hpp>
+#include <dirent.h>
 #include <iostream>
+#include <cstring>
+#include <sys/types.h>
+#include <stdlib.h>
 
 using namespace cv;
 using namespace std;
@@ -58,7 +55,7 @@ __global__ void sepia(uint8_t* input, int width, int height, int colorWidthStep)
 	}
 }
 
-inline void rgb_to_sepia(const Mat& input) {
+float rgb_to_sepia(const Mat& input) {
 	const int Bytes = input.step * input.rows;
 	uint8_t* d_input;
 	cudaEvent_t start, stop;
@@ -76,23 +73,47 @@ inline void rgb_to_sepia(const Mat& input) {
 	cudaMemcpy(input.data, d_input, sizeof(uint8_t) * Bytes, cudaMemcpyDeviceToHost);
 	cudaFree(d_input);
 	cudaEventElapsedTime(&time, start, stop);
-	printf("Time for the kernel: %f ms\n", time);
 	cudaEventDestroy(start);
 	cudaEventDestroy(stop);
 	cudaDeviceSynchronize();
+	return time;
 }
 
-int main(int argc, char const* argv[]) {
+int main()
+{
+	struct dirent* de;  // Pointer for directory entry 
+	int i = 0;
+	float time = 0;
+	FILE* fp;
 
-	printf("Program is started\n");
-	Mat image = imread("lena.jpg");
-	
-	rgb_to_sepia(image);
+	// opendir() returns a pointer of DIR type.  
+	DIR* dr = opendir("./test_images/");
+	printf("Program has started\n");
+	if (dr == NULL)  // opendir returns NULL if couldn't open directory 
+	{
+		printf("Could not open current directory");
+		return 0;
 
+	}
+	while ((de = readdir(dr)) != NULL) {
+		if (i > 1) {
+			string name(de->d_name);
+			string path("./test_images/");
+			string new_path("./processed_images/");
+			path.append(name);
+			new_path.append(name);
+			Mat image = imread(path);
 
-	imwrite("lena_sepia_CUDA.jpg", image);
+			time = rgb_to_sepia(image);
+
+			imwrite(new_path, image);
+			fp = fopen("CUDA_sepia.txt", "a");
+			fprintf(fp, "%f\n", time / 1000);
+			fclose(fp);
+		}
+		i++;
+	}
+	closedir(dr);
+	printf("End.");
 	system("pause");
-
-
-	return 0;
 }

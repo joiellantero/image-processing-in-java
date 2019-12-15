@@ -13,7 +13,7 @@ class Photo {
     public static int num = 1000;
 }
  
-class rgb_to_red extends Thread{
+class rgb_to_gray extends Thread{
        
         private int x;
         private int x_end;
@@ -26,15 +26,20 @@ class rgb_to_red extends Thread{
             
                     int rgb = image.getRGB(i,j);
                     int a = (rgb>>24)&0xff; 
-                	int r = (rgb>>8)&0xff;
-					rgb = (a<<24) | (r<<16) | (0<<8) | 0;
+                	int r = (rgb>>16)&0xff;
+					int g = (rgb>>8)&0xff; 
+                	int b = rgb&0xff;  
+					int red = (int)(r*0.21 + g*0.71 + b*0.07);
+               		int green = (int)(r*0.21 + g*0.71 + b*0.07);
+               		int blue = (int)(r*0.21 + g*0.71 + b*0.07);
+               		rgb = (a<<24) | (red<<16) | (green<<8) | blue; 
   
-                    image.setRGB(i, j, rgb); 
+                    image.setRGB(i, j, rgb);
             
                 }
             }   
         }
-        rgb_to_red(BufferedImage image, int x, int x_end)
+        rgb_to_gray(BufferedImage image, int x, int x_end)
         {
                 this.x = x;
                 this.x_end = x_end;
@@ -42,7 +47,7 @@ class rgb_to_red extends Thread{
         }       
 }
 
-public class Red_mt
+public class Grayscale_mt
 {      
     static int w_total = 0;
     static int h_total = 0;
@@ -71,56 +76,54 @@ public class Red_mt
     {
 
         final File folder = new File("./test_images/");
-        Red_mt listFiles = new Red_mt();
+        Grayscale_mt listFiles = new Grayscale_mt();
         listFiles.listFilesForFolder(folder);
 
         long duration[] = new long[Photo.num];
 
-        System.out.println("Processing images...");
-        for(int i = 0; i < Photo.num; i++){
-		    //read raw images
-		    try 
-		    {
-		        image = ImageIO.read(new File(s[i]));
-		    }
-		    catch (IOException e)
-		    {
-		        System.out.println(e);
-		    }
-			long start=System.currentTimeMillis();
-		        rgb_to_red t1 = new rgb_to_red(image, 0, image.getWidth()/4);
-                rgb_to_red t2 = new rgb_to_red(image, image.getWidth()/4, image.getWidth()/2);
-                rgb_to_red t3 = new rgb_to_red(image, image.getWidth()/2, image.getWidth()-(image.getWidth()/4));
-                rgb_to_red t4 = new rgb_to_red(image, image.getWidth()-(image.getWidth()/4), image.getWidth());
-                        
-                /* threads*/
-                t1.start();
-                t2.start();
-                t3.start();
-                t4.start();
-                t1.join();
-                t2.join();
-                t3.join();
-                t4.join();
-        
-                long stop=System.currentTimeMillis();
-                duration[i] = stop-start;
-				//save processed images
-				try
-				{
-				    ImageIO.write(image, "jpg", new File("./processed_images/Red_MT_" + name[i]));
+				for(int i = 0; i < Photo.num; i++){
+					try 
+					{
+						image = ImageIO.read(new File(s[i]));
+					}
+					catch (IOException e)
+					{
+						System.out.println(e);
+					}               
+					long start=System.currentTimeMillis();
+							rgb_to_gray t1 = new rgb_to_gray(image, 0, image.getWidth()/4);
+						    rgb_to_gray t2 = new rgb_to_gray(image, image.getWidth()/4, image.getWidth()/2);
+						    rgb_to_gray t3 = new rgb_to_gray(image, image.getWidth()/2, image.getWidth()-(image.getWidth()/4));
+						    rgb_to_gray t4 = new rgb_to_gray(image, image.getWidth()-(image.getWidth()/4), image.getWidth());
+						            
+						    /* threads*/
+						    t1.start();
+						    t2.start();
+						    t3.start();
+						    t4.start();
+						    t1.join();
+						    t2.join();
+						    t3.join();
+						    t4.join();
+				
+						    long stop=System.currentTimeMillis();
+						    duration[i] = stop-start;
+
+					try
+					{
+						ImageIO.write(image, "jpg", new File("./processed_images/Blue_MT_" + name[i]));
+					}
+					catch (IOException e)
+					{
+						System.out.println(e);
+					}
 				}
-				catch (IOException e)
-				{
-				    System.out.println(e);
-				}
-        }
-        System.out.println("Process successful");
+				System.out.println("Process successful");
 
         String content[] = new String[Photo.num];
 
         try {
-            File file = new File("./Execution_Time/Red_MT_Execution_Timelog.txt");
+            File file = new File("./Execution_Time/Grayscale_MT_Execution_Timelog.txt");
 
             if (!file.exists()) {
                 file.createNewFile();

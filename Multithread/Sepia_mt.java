@@ -13,7 +13,7 @@ class Photo {
     public static int num = 1000;
 }
  
-class rgb_to_red extends Thread{
+class rgb_to_sepia extends Thread{
        
         private int x;
         private int x_end;
@@ -24,17 +24,40 @@ class rgb_to_red extends Thread{
             for (int i=x; i<x_end; i++){
                 for (int j=0; j<image.getHeight(); j++){
             
-                    int rgb = image.getRGB(i,j);
-                    int a = (rgb>>24)&0xff; 
-                	int r = (rgb>>8)&0xff;
-					rgb = (a<<24) | (r<<16) | (0<<8) | 0;
+                    int rgb = image.getRGB(i,j); 
   
+                    int a = (rgb>>24)&0xff; 
+                    int r = (rgb>>16)&0xff;
+                    int g = (rgb>>8)&0xff; 
+                    int b = rgb&0xff;  
+                    int tr = (int)(r*0.393 + g*0.769 + b*0.189);
+                    int tg = (int)(r*0.349 + g*0.686 + b*0.168);
+                    int tb = (int)(r*0.272 + g*0.534 + b*0.131);
+                              
+                    if (tr > 255){
+                    	r = 255;
+                    }else{
+                    	r = tr;
+                    }
+                   	if (tg > 255){
+                   		g = 255;
+                    }else{
+                    	g = tg;
+                   	}	
+                   	if (tb > 255){
+                    	b = 255;
+                    }else{
+                    	b = tb;
+                    }
+                            
+                    rgb = (a<<24) | (r<<16) | (g<<8) | b; 
+              
                     image.setRGB(i, j, rgb); 
             
                 }
             }   
         }
-        rgb_to_red(BufferedImage image, int x, int x_end)
+        rgb_to_sepia(BufferedImage image, int x, int x_end)
         {
                 this.x = x;
                 this.x_end = x_end;
@@ -42,7 +65,7 @@ class rgb_to_red extends Thread{
         }       
 }
 
-public class Red_mt
+public class Sepia_mt
 {      
     static int w_total = 0;
     static int h_total = 0;
@@ -71,27 +94,27 @@ public class Red_mt
     {
 
         final File folder = new File("./test_images/");
-        Red_mt listFiles = new Red_mt();
+        Sepia_mt listFiles = new Sepia_mt();
         listFiles.listFilesForFolder(folder);
 
         long duration[] = new long[Photo.num];
 
         System.out.println("Processing images...");
         for(int i = 0; i < Photo.num; i++){
-		    //read raw images
+       		//read raw images
 		    try 
 		    {
-		        image = ImageIO.read(new File(s[i]));
+				image = ImageIO.read(new File(s[i]));
 		    }
 		    catch (IOException e)
 		    {
 		        System.out.println(e);
-		    }
+		    }     
 			long start=System.currentTimeMillis();
-		        rgb_to_red t1 = new rgb_to_red(image, 0, image.getWidth()/4);
-                rgb_to_red t2 = new rgb_to_red(image, image.getWidth()/4, image.getWidth()/2);
-                rgb_to_red t3 = new rgb_to_red(image, image.getWidth()/2, image.getWidth()-(image.getWidth()/4));
-                rgb_to_red t4 = new rgb_to_red(image, image.getWidth()-(image.getWidth()/4), image.getWidth());
+		        rgb_to_sepia t1 = new rgb_to_sepia(image, 0, image.getWidth()/4);
+                rgb_to_sepia t2 = new rgb_to_sepia(image, image.getWidth()/4, image.getWidth()/2);
+                rgb_to_sepia t3 = new rgb_to_sepia(image, image.getWidth()/2, image.getWidth()-(image.getWidth()/4));
+                rgb_to_sepia t4 = new rgb_to_sepia(image, image.getWidth()-(image.getWidth()/4), image.getWidth());
                         
                 /* threads*/
                 t1.start();
@@ -105,10 +128,11 @@ public class Red_mt
         
                 long stop=System.currentTimeMillis();
                 duration[i] = stop-start;
+				
 				//save processed images
 				try
 				{
-				    ImageIO.write(image, "jpg", new File("./processed_images/Red_MT_" + name[i]));
+				    ImageIO.write(image, "jpg", new File("./processed_images/Sepia_MT_" + name[i]));
 				}
 				catch (IOException e)
 				{
@@ -120,7 +144,7 @@ public class Red_mt
         String content[] = new String[Photo.num];
 
         try {
-            File file = new File("./Execution_Time/Red_MT_Execution_Timelog.txt");
+            File file = new File("./Execution_Time/Sepia_MT_Execution_Timelog.txt");
 
             if (!file.exists()) {
                 file.createNewFile();
